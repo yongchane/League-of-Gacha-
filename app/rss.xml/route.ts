@@ -1,4 +1,7 @@
 // RSS Feed for Naver Search
+export const dynamic = "force-static";
+export const revalidate = false;
+
 export async function GET() {
   const baseUrl = "https://league-of-gacha.pages.dev";
   const buildDate = new Date().toUTCString();
