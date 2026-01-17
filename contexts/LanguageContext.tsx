@@ -22,6 +22,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 const translations = {
   en: {
     // Navigation
+    home: "Home",
     myPage: "My Stats",
     community: "Community",
     about: "About",
@@ -72,6 +73,7 @@ const translations = {
   },
   ko: {
     // Navigation
+    home: "홈",
     myPage: "내 전적",
     community: "로스터 자랑",
     about: "소개",

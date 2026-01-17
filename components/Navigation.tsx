@@ -33,10 +33,7 @@ export default function Navigation() {
                 </div>
               </motion.div>
             </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex gap-4 items-center">
-              {/* Language Toggle */}
+            <div className="flex gap-4">
               <div className="flex gap-1 bg-lol-dark-lighter rounded-lg p-1">
                 <button
                   onClick={() => setLanguage("en")}
@@ -59,17 +56,21 @@ export default function Navigation() {
                   KO
                 </button>
               </div>
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex gap-4 items-center">
+                {/* Language Toggle */}
 
-              <Link href="/my-page">
-                <button className="px-4 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all">
-                  {t("myPage")}
-                </button>
-              </Link>
-              <Link href="/community">
-                <button className="px-4 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all">
-                  {t("community")}
-                </button>
-              </Link>
+                <Link href="/my-page">
+                  <button className="px-4 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all">
+                    {t("myPage")}
+                  </button>
+                </Link>
+                <Link href="/community">
+                  <button className="px-4 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all">
+                    {t("community")}
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
         </header>
@@ -79,17 +80,17 @@ export default function Navigation() {
         <div className="flex items-center justify-around px-4 py-3">
           <Link href="/" className="flex-1">
             <button className="w-full px-3 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all text-sm font-medium">
-              Home
+              {t("home")}
             </button>
           </Link>
           <Link href="/my-page" className="flex-1 mx-2">
             <button className="w-full px-3 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all text-sm font-medium">
-              My Stats
+              {t("myPage")}
             </button>
           </Link>
           <Link href="/community" className="flex-1">
             <button className="w-full px-3 py-2 rounded-lg bg-lol-dark-lighter border border-lol-gold/30 text-lol-light hover:text-lol-gold hover:border-lol-gold/60 transition-all text-sm font-medium">
-              Community
+              {t("community")}
             </button>
           </Link>
         </div>
