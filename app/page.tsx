@@ -23,11 +23,19 @@ const GachaModal = dynamic(() => import("@/components/GachaModal"), {
   ),
 });
 
+const GachaMultiModal = dynamic(() => import("@/components/GachaMultiModal"), {
+  loading: () => (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+      <div className="text-white">Loading...</div>
+    </div>
+  ),
+});
+
 const ChampionshipCelebration = dynamic(
   () => import("@/components/ChampionshipCelebration"),
   {
     loading: () => null,
-  }
+  },
 );
 import { generateShareURL, copyToClipboard } from "@/lib/roster-share";
 import {
@@ -48,13 +56,15 @@ export default function Home() {
   });
 
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(
-    null
+    null,
   );
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [isGachaOpen, setIsGachaOpen] = useState(false);
   const [isChampionshipOpen, setIsChampionshipOpen] = useState(false);
-  const [isSummoningAll, setIsSummoningAll] = useState(false);
-  const [pendingPositions, setPendingPositions] = useState<Position[]>([]);
+  const [isMultiGachaOpen, setIsMultiGachaOpen] = useState(false);
+  const [multiPlayers, setMultiPlayers] = useState<Map<Position, Player>>(
+    new Map(),
+  );
   const [shareMessage, setShareMessage] = useState("");
   const [isCommunityModalOpen, setIsCommunityModalOpen] = useState(false);
   const [communityUserName, setCommunityUserName] = useState("");
@@ -73,13 +83,13 @@ export default function Home() {
   useEffect(() => {
     const positions: Position[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
     const isComplete = positions.every(
-      (pos) => roster[pos.toLowerCase() as keyof UserRoster]
+      (pos) => roster[pos.toLowerCase() as keyof UserRoster],
     );
 
     if (isComplete) {
       // Check if this is a championship roster
       const players = positions.map(
-        (pos) => roster[pos.toLowerCase() as keyof UserRoster]
+        (pos) => roster[pos.toLowerCase() as keyof UserRoster],
       ) as Player[];
       const playerNames = players.map((p) => p.name);
       const team = players[0].teamShort;
@@ -87,7 +97,7 @@ export default function Home() {
 
       // Check if all players are from same team and year
       const sameTeamYear = players.every(
-        (p) => p.teamShort === team && p.year === year
+        (p) => p.teamShort === team && p.year === year,
       );
 
       if (sameTeamYear) {
@@ -109,7 +119,7 @@ export default function Home() {
     // Get excluded player IDs (already in roster)
     const excludeIds = POSITIONS.map(
       (pos) =>
-        roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined
+        roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined,
     )
       .filter((p): p is Player => p !== undefined)
       .map((p) => p.id);
@@ -130,18 +140,6 @@ export default function Home() {
     setIsGachaOpen(false);
     setCurrentPlayer(null);
     setSelectedPosition(null);
-
-    // If summoning all, continue with next position
-    if (isSummoningAll && pendingPositions.length > 0) {
-      setTimeout(() => {
-        const [nextPosition, ...remaining] = pendingPositions;
-        setPendingPositions(remaining);
-        handleSummon(nextPosition);
-      }, 500);
-    } else {
-      setIsSummoningAll(false);
-      setPendingPositions([]);
-    }
   };
 
   const handleCancel = () => {
@@ -149,7 +147,7 @@ export default function Home() {
     if (selectedPosition) {
       const excludeIds = POSITIONS.map(
         (pos) =>
-          roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined
+          roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined,
       )
         .filter((p): p is Player => p !== undefined)
         .map((p) => p.id);
@@ -169,16 +167,65 @@ export default function Home() {
   const handleSummonAll = () => {
     // 빈 포지션들 찾기
     const emptyPositions = POSITIONS.filter(
-      (pos) => !roster[pos.toLowerCase() as keyof UserRoster]
+      (pos) => !roster[pos.toLowerCase() as keyof UserRoster],
     );
 
     if (emptyPositions.length === 0) return;
 
-    // Set state for continuous summoning
-    setIsSummoningAll(true);
-    const [firstPosition, ...remaining] = emptyPositions;
-    setPendingPositions(remaining);
-    handleSummon(firstPosition);
+    // Get excluded player IDs
+    const excludeIds = POSITIONS.map(
+      (pos) =>
+        roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined,
+    )
+      .filter((p): p is Player => p !== undefined)
+      .map((p) => p.id);
+
+    // Get all players at once
+    const newPlayers = new Map<Position, Player>();
+    const usedIds = new Set(excludeIds);
+
+    emptyPositions.forEach((position) => {
+      const player = getRandomPlayer(position, Array.from(usedIds));
+      newPlayers.set(position, player);
+      usedIds.add(player.id);
+    });
+
+    setMultiPlayers(newPlayers);
+    setIsMultiGachaOpen(true);
+  };
+
+  const handleMultiConfirm = () => {
+    // Add all players to roster
+    const updates: Partial<UserRoster> = {};
+    multiPlayers.forEach((player, position) => {
+      (updates as any)[position.toLowerCase()] = player;
+    });
+
+    setRoster((prev) => ({ ...prev, ...updates }));
+    setIsMultiGachaOpen(false);
+    setMultiPlayers(new Map());
+  };
+
+  const handleMultiReroll = () => {
+    // Reroll all positions
+    const positions = Array.from(multiPlayers.keys());
+    const excludeIds = POSITIONS.map(
+      (pos) =>
+        roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined,
+    )
+      .filter((p): p is Player => p !== undefined)
+      .map((p) => p.id);
+
+    const newPlayers = new Map<Position, Player>();
+    const usedIds = new Set(excludeIds);
+
+    positions.forEach((position) => {
+      const player = getRandomPlayer(position, Array.from(usedIds));
+      newPlayers.set(position, player);
+      usedIds.add(player.id);
+    });
+
+    setMultiPlayers(newPlayers);
   };
 
   const handleShareRoster = async () => {
@@ -235,7 +282,7 @@ export default function Home() {
   };
 
   const isRosterComplete = POSITIONS.every(
-    (pos) => roster[pos.toLowerCase() as keyof UserRoster]
+    (pos) => roster[pos.toLowerCase() as keyof UserRoster],
   );
 
   return (
@@ -307,7 +354,7 @@ export default function Home() {
                   onClick={() => {
                     // Find first empty position
                     const emptyPosition = POSITIONS.find(
-                      (pos) => !roster[pos.toLowerCase() as keyof UserRoster]
+                      (pos) => !roster[pos.toLowerCase() as keyof UserRoster],
                     );
                     if (emptyPosition) {
                       handleSummon(emptyPosition);
@@ -360,7 +407,7 @@ export default function Home() {
                 <div className="text-lol-light">
                   {t("championshipComplete").replace(
                     "{team}",
-                    roster.championship.team
+                    roster.championship.team,
                   )}
                 </div>
               </div>
@@ -442,6 +489,13 @@ export default function Home() {
           isOpen={isGachaOpen}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+        />
+
+        <GachaMultiModal
+          players={multiPlayers}
+          isOpen={isMultiGachaOpen}
+          onConfirm={handleMultiConfirm}
+          onRerollAll={handleMultiReroll}
         />
 
         <ChampionshipCelebration

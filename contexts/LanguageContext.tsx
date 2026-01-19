@@ -16,7 +16,7 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const translations = {
@@ -40,6 +40,9 @@ const translations = {
     recordLoss: "Record Loss",
     shareCommunity: "Share to Community",
     shareLink: "Share Link",
+    confirm: "Confirm",
+    reroll: "Reroll",
+    findingPlayers: "Found your player!",
 
     // Community
     enterName: "Enter your name",
@@ -91,6 +94,9 @@ const translations = {
     recordLoss: "패배 기록",
     shareCommunity: "커뮤니티에 공유",
     shareLink: "링크 공유",
+    confirm: "확인",
+    reroll: "다시 뽑기",
+    findingPlayers: "당신의 선수를 찾았습니다!",
 
     // Community
     enterName: "이름을 입력하세요",

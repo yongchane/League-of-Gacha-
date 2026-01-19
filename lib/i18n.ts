@@ -12,6 +12,7 @@ export interface Translations {
   gachaTitle: string;
   gachaSubtitle: string;
   selectPosition: string;
+  findingPlayers: string;
 
   // Championship
   worldsChampion: string;
@@ -53,6 +54,7 @@ const translations: Record<Language, Translations> = {
     gachaTitle: "LoL 로스터 뽑기",
     gachaSubtitle: "최강의 드림팀을 만들어보세요!",
     selectPosition: "포지션을 선택하세요",
+    findingPlayers: "당신의 선수를 찾았습니다!",
 
     // Championship
     worldsChampion: "월드 챔피언십 우승",
@@ -102,6 +104,7 @@ const translations: Record<Language, Translations> = {
     gachaTitle: "LoL Roster Gacha",
     gachaSubtitle: "Build your dream team!",
     selectPosition: "Select a position",
+    findingPlayers: "Found your player!",
 
     // Championship
     worldsChampion: "Worlds Champion",
