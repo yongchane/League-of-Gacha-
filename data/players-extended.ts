@@ -960,6 +960,9 @@ export const EXTENDED_PLAYERS: Player[] = [
     region: "LCK",
     nationality: "South Korea",
     iso: "kr",
+    isWinner: true,
+    championshipLeague: "LCK",
+    championshipYear: 2017,
   },
   {
     id: "faker_2022",
@@ -987,6 +990,8 @@ export const EXTENDED_PLAYERS: Player[] = [
     nationality: "South Korea",
     iso: "kr",
     isWinner: true,
+    championshipLeague: "WORLDS",
+    championshipYear: 2023,
   },
   {
     id: "faker_2024",
@@ -1001,6 +1006,8 @@ export const EXTENDED_PLAYERS: Player[] = [
     nationality: "South Korea",
     iso: "kr",
     isWinner: true,
+    championshipLeague: "WORLDS",
+    championshipYear: 2024,
   },
 
   // Samsung
