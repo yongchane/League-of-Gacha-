@@ -253,13 +253,17 @@ export default function Home() {
       return;
     }
 
+    const rosterWithId = roster.id
+      ? roster
+      : { ...roster, id: Date.now().toString() };
+
     // Generate unique ID for roster if not exists
     if (!roster.id) {
-      setRoster((prev) => ({ ...prev, id: Date.now().toString() }));
+      setRoster(rosterWithId);
     }
 
     // Save to community
-    await saveToCommunity(roster, communityUserName);
+    await saveToCommunity(rosterWithId, communityUserName);
     saveUserName(communityUserName);
 
     setCommunityMessage("✓ Posted to community!");
@@ -270,11 +274,14 @@ export default function Home() {
   };
 
   const handleRecordGameResult = (result: "win" | "loss") => {
+    const rosterWithId = roster.id
+      ? roster
+      : { ...roster, id: Date.now().toString() };
     if (!roster.id) {
-      setRoster((prev) => ({ ...prev, id: Date.now().toString() }));
+      setRoster(rosterWithId);
     }
 
-    recordGameResult(roster, result);
+    recordGameResult(rosterWithId, result);
 
     const message =
       result === "win" ? "✓ Victory recorded!" : "✓ Defeat recorded!";
