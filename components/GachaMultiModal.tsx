@@ -2,7 +2,7 @@
 
 import { Player, Position } from "@/types";
 import { m as motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, RefObject } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface GachaMultiModalProps {
@@ -10,6 +10,8 @@ interface GachaMultiModalProps {
   isOpen: boolean;
   onConfirm: () => void;
   onRerollAll: () => void;
+  pickBgmRef: RefObject<HTMLAudioElement | null>;
+  cardBgmRef: RefObject<HTMLAudioElement | null>;
 }
 
 export default function GachaMultiModal({
@@ -17,6 +19,8 @@ export default function GachaMultiModal({
   isOpen,
   onConfirm,
   onRerollAll,
+  pickBgmRef,
+  cardBgmRef,
 }: GachaMultiModalProps) {
   const [stage, setStage] = useState<"loading" | "reveal">("loading");
   const [displayPlayers, setDisplayPlayers] = useState<Map<Position, Player>>(
@@ -42,6 +46,21 @@ export default function GachaMultiModal({
         prevPlayersKeyRef.current = currentKey;
       }
 
+      // Set up pick BGM ended listener to seamlessly transition to card BGM
+      const handlePickBgmEnded = () => {
+        console.log("Pick BGM ended (multi), starting card BGM immediately");
+        if (cardBgmRef.current && prevPlayersKeyRef.current === currentKey) {
+          cardBgmRef.current.currentTime = 0;
+          cardBgmRef.current.play().catch((error) => {
+            console.log("Card BGM auto-play failed:", error);
+          });
+        }
+      };
+
+      if (pickBgmRef.current) {
+        pickBgmRef.current.addEventListener('ended', handlePickBgmEnded, { once: true });
+      }
+
       const timer = setTimeout(() => {
         if (prevPlayersKeyRef.current === currentKey) {
           setStage("reveal");
@@ -49,9 +68,14 @@ export default function GachaMultiModal({
         }
       }, 1600);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        if (pickBgmRef.current) {
+          pickBgmRef.current.removeEventListener('ended', handlePickBgmEnded);
+        }
+      };
     }
-  }, [isOpen, players]);
+  }, [isOpen, players, pickBgmRef, cardBgmRef]);
 
   if (!isOpen || players.size === 0) return null;
 

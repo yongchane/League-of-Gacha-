@@ -2,7 +2,7 @@
 
 import { Player } from "@/types";
 import { m as motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, RefObject } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface GachaModalProps {
@@ -10,6 +10,8 @@ interface GachaModalProps {
   isOpen: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  pickBgmRef: RefObject<HTMLAudioElement | null>;
+  cardBgmRef: RefObject<HTMLAudioElement | null>;
 }
 
 export default function GachaModal({
@@ -17,6 +19,8 @@ export default function GachaModal({
   isOpen,
   onConfirm,
   onCancel,
+  pickBgmRef,
+  cardBgmRef,
 }: GachaModalProps) {
   const [stage, setStage] = useState<
     "loading" | "nationality" | "league" | "reveal" | "show"
@@ -43,6 +47,22 @@ export default function GachaModal({
         prevPlayerIdRef.current = player.id;
       }
 
+      // Set up pick BGM ended listener to seamlessly transition to card BGM
+      const handlePickBgmEnded = () => {
+        console.log("Pick BGM ended, starting card BGM immediately");
+        if (cardBgmRef.current && prevPlayerIdRef.current === player.id) {
+          cardBgmRef.current.currentTime = 0;
+          cardBgmRef.current.play().catch((error) => {
+            console.log("Card BGM auto-play failed:", error);
+          });
+        }
+      };
+
+      if (pickBgmRef.current) {
+        console.log("Pick BGM duration:", pickBgmRef.current.duration, "seconds");
+        pickBgmRef.current.addEventListener('ended', handlePickBgmEnded, { once: true });
+      }
+
       // Special FIFA-style reveal sequence for Worlds winners (1.6x slower for better viewing)
       if (useFifaAnimation) {
         const timer1 = setTimeout(() => {
@@ -64,10 +84,12 @@ export default function GachaModal({
           if (prevPlayerIdRef.current === player.id) {
             setStage("show");
             setDisplayPlayer(player);
+
             // Play Faker audio when Faker is revealed
             if (isFaker) {
               if (!audioRef.current) {
                 audioRef.current = new Audio("/faker.mp3");
+                audioRef.current.volume = 0.3;
               }
               audioRef.current.currentTime = 0;
               audioRef.current.play().catch((error) => {
@@ -82,6 +104,9 @@ export default function GachaModal({
           clearTimeout(timer2);
           clearTimeout(timer3);
           clearTimeout(timer4);
+          if (pickBgmRef.current) {
+            pickBgmRef.current.removeEventListener('ended', handlePickBgmEnded);
+          }
         };
       } else {
         // Normal reveal sequence
@@ -94,10 +119,12 @@ export default function GachaModal({
           if (prevPlayerIdRef.current === player.id) {
             setStage("show");
             setDisplayPlayer(player);
+
             // Play Faker audio when Faker is revealed
             if (isFaker) {
               if (!audioRef.current) {
                 audioRef.current = new Audio("/faker.mp3");
+                audioRef.current.volume = 0.3;
               }
               audioRef.current.currentTime = 0;
               audioRef.current.play().catch((error) => {
@@ -110,10 +137,13 @@ export default function GachaModal({
         return () => {
           clearTimeout(timer1);
           clearTimeout(timer2);
+          if (pickBgmRef.current) {
+            pickBgmRef.current.removeEventListener('ended', handlePickBgmEnded);
+          }
         };
       }
     }
-  }, [isOpen, player, useFifaAnimation, isFaker]);
+  }, [isOpen, player, useFifaAnimation, isFaker, pickBgmRef, cardBgmRef]);
 
   // Cleanup audio on unmount
   useEffect(() => {

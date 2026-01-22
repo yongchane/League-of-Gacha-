@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Player, Position, UserRoster } from "@/types";
 import { getRandomPlayer } from "@/data/players";
@@ -72,6 +72,83 @@ export default function Home() {
   const [communityMessage, setCommunityMessage] = useState("");
   const [gameResultMessage, setGameResultMessage] = useState("");
 
+  // Background music refs
+  const mainBgmRef = useRef<HTMLAudioElement | null>(null);
+  const pickBgmRef = useRef<HTMLAudioElement | null>(null);
+  const cardBgmRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize background music
+  useEffect(() => {
+    // Main BGM - preload metadata only for faster initial load
+    const mainAudio = new Audio();
+    mainAudio.src = "/log_bgm.mp3";
+    mainAudio.preload = "metadata"; // Only preload metadata, not full file
+    mainAudio.loop = true;
+    mainAudio.volume = 0.3;
+    mainBgmRef.current = mainAudio;
+
+    // Pick BGM - preload auto for immediate playback when needed
+    const pickAudio = new Audio();
+    pickAudio.src = "/pick_bgm.mp3";
+    pickAudio.preload = "auto"; // Preload fully for instant playback
+    pickAudio.loop = false;
+    pickAudio.volume = 0.3;
+    pickBgmRef.current = pickAudio;
+
+    // Card BGM - preload auto for seamless transition
+    const cardAudio = new Audio();
+    cardAudio.src = "/card_bgm.mp3";
+    cardAudio.preload = "auto"; // Preload fully for instant playback
+    cardAudio.loop = false;
+    cardAudio.volume = 0.3;
+    cardBgmRef.current = cardAudio;
+
+    let audioInitialized = false;
+
+    // Play main BGM on first user interaction (only if not already playing)
+    const handleInteraction = () => {
+      if (!audioInitialized && mainBgmRef.current) {
+        mainBgmRef.current.play().catch((error) => {
+          console.log("Audio autoplay prevented:", error);
+        });
+        audioInitialized = true;
+        document.removeEventListener("click", handleInteraction);
+        document.removeEventListener("keydown", handleInteraction);
+      }
+    };
+
+    // Try to play immediately (may be blocked by browser)
+    mainBgmRef.current.play()
+      .then(() => {
+        audioInitialized = true;
+        document.removeEventListener("click", handleInteraction);
+        document.removeEventListener("keydown", handleInteraction);
+      })
+      .catch(() => {
+        // If autoplay is blocked, wait for user interaction
+        console.log("Autoplay blocked, waiting for user interaction");
+        document.addEventListener("click", handleInteraction);
+        document.addEventListener("keydown", handleInteraction);
+      });
+
+    return () => {
+      if (mainBgmRef.current) {
+        mainBgmRef.current.pause();
+        mainBgmRef.current.currentTime = 0;
+      }
+      if (pickBgmRef.current) {
+        pickBgmRef.current.pause();
+        pickBgmRef.current.currentTime = 0;
+      }
+      if (cardBgmRef.current) {
+        cardBgmRef.current.pause();
+        cardBgmRef.current.currentTime = 0;
+      }
+      document.removeEventListener("click", handleInteraction);
+      document.removeEventListener("keydown", handleInteraction);
+    };
+  }, []);
+
   // Load saved username on mount
   useEffect(() => {
     const savedName = getUserName();
@@ -115,6 +192,19 @@ export default function Home() {
   }, [roster]);
 
   const handleSummon = (position: Position) => {
+    // Stop main BGM and play pick BGM
+    if (mainBgmRef.current && !mainBgmRef.current.paused) {
+      mainBgmRef.current.pause();
+      console.log("Main BGM stopped");
+    }
+    if (pickBgmRef.current) {
+      pickBgmRef.current.currentTime = 0;
+      pickBgmRef.current.play().catch((error) => {
+        console.log("Pick BGM play failed:", error);
+      });
+      console.log("Pick BGM started");
+    }
+
     setSelectedPosition(position);
 
     // Get excluded player IDs (already in roster)
@@ -138,6 +228,23 @@ export default function Home() {
         [selectedPosition.toLowerCase()]: currentPlayer,
       }));
     }
+
+    // Stop pick/card BGMs and resume main BGM
+    if (pickBgmRef.current) {
+      pickBgmRef.current.pause();
+      pickBgmRef.current.currentTime = 0;
+    }
+    if (cardBgmRef.current) {
+      cardBgmRef.current.pause();
+      cardBgmRef.current.currentTime = 0;
+    }
+    if (mainBgmRef.current) {
+      mainBgmRef.current.play().catch((error) => {
+        console.log("Main BGM resume failed:", error);
+      });
+      console.log("Main BGM resumed");
+    }
+
     setIsGachaOpen(false);
     setCurrentPlayer(null);
     setSelectedPosition(null);
@@ -146,6 +253,18 @@ export default function Home() {
   const handleCancel = () => {
     // Reroll - get another player
     if (selectedPosition) {
+      // Stop card BGM and restart pick BGM for reroll
+      if (cardBgmRef.current && !cardBgmRef.current.paused) {
+        cardBgmRef.current.pause();
+        cardBgmRef.current.currentTime = 0;
+      }
+      if (pickBgmRef.current) {
+        pickBgmRef.current.currentTime = 0;
+        pickBgmRef.current.play().catch((error) => {
+          console.log("Pick BGM play failed:", error);
+        });
+      }
+
       const excludeIds = POSITIONS.map(
         (pos) =>
           roster[pos.toLowerCase() as keyof UserRoster] as Player | undefined,
@@ -166,6 +285,19 @@ export default function Home() {
   };
 
   const handleSummonAll = () => {
+    // Stop main BGM and play pick BGM
+    if (mainBgmRef.current && !mainBgmRef.current.paused) {
+      mainBgmRef.current.pause();
+      console.log("Main BGM stopped");
+    }
+    if (pickBgmRef.current) {
+      pickBgmRef.current.currentTime = 0;
+      pickBgmRef.current.play().catch((error) => {
+        console.log("Pick BGM play failed:", error);
+      });
+      console.log("Pick BGM started");
+    }
+
     // 빈 포지션들 찾기
     const emptyPositions = POSITIONS.filter(
       (pos) => !roster[pos.toLowerCase() as keyof UserRoster],
@@ -205,9 +337,37 @@ export default function Home() {
     setRoster((prev) => ({ ...prev, ...updates }));
     setIsMultiGachaOpen(false);
     setMultiPlayers(new Map());
+
+    // Stop pick/card BGMs and resume main BGM
+    if (pickBgmRef.current) {
+      pickBgmRef.current.pause();
+      pickBgmRef.current.currentTime = 0;
+    }
+    if (cardBgmRef.current) {
+      cardBgmRef.current.pause();
+      cardBgmRef.current.currentTime = 0;
+    }
+    if (mainBgmRef.current) {
+      mainBgmRef.current.play().catch((error) => {
+        console.log("Main BGM resume failed:", error);
+      });
+      console.log("Main BGM resumed");
+    }
   };
 
   const handleMultiReroll = () => {
+    // Stop card BGM and restart pick BGM for reroll
+    if (cardBgmRef.current && !cardBgmRef.current.paused) {
+      cardBgmRef.current.pause();
+      cardBgmRef.current.currentTime = 0;
+    }
+    if (pickBgmRef.current) {
+      pickBgmRef.current.currentTime = 0;
+      pickBgmRef.current.play().catch((error) => {
+        console.log("Pick BGM play failed:", error);
+      });
+    }
+
     // Reroll all positions
     const positions = Array.from(multiPlayers.keys());
     const excludeIds = POSITIONS.map(
@@ -527,6 +687,8 @@ export default function Home() {
           isOpen={isGachaOpen}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+          pickBgmRef={pickBgmRef}
+          cardBgmRef={cardBgmRef}
         />
 
         <GachaMultiModal
@@ -534,6 +696,8 @@ export default function Home() {
           isOpen={isMultiGachaOpen}
           onConfirm={handleMultiConfirm}
           onRerollAll={handleMultiReroll}
+          pickBgmRef={pickBgmRef}
+          cardBgmRef={cardBgmRef}
         />
 
         <ChampionshipCelebration
