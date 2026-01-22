@@ -43,7 +43,7 @@ import {
   getUserName,
   saveUserName,
 } from "@/lib/community-storage";
-import { recordGameResult } from "@/lib/my-page-storage";
+import { recordGameResult, getBgmMuted, setBgmMuted } from "@/lib/my-page-storage";
 import Footer from "@/components/Footer";
 
 const POSITIONS: Position[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
@@ -71,11 +71,41 @@ export default function Home() {
   const [communityUserName, setCommunityUserName] = useState("");
   const [communityMessage, setCommunityMessage] = useState("");
   const [gameResultMessage, setGameResultMessage] = useState("");
+  const [isBgmMuted, setIsBgmMuted] = useState(false);
 
   // Background music refs
   const mainBgmRef = useRef<HTMLAudioElement | null>(null);
   const pickBgmRef = useRef<HTMLAudioElement | null>(null);
   const cardBgmRef = useRef<HTMLAudioElement | null>(null);
+
+  // Load BGM muted setting on mount
+  useEffect(() => {
+    const savedMuted = getBgmMuted();
+    setIsBgmMuted(savedMuted);
+  }, []);
+
+  // Toggle BGM mute
+  const toggleBgmMute = () => {
+    const newMuted = !isBgmMuted;
+    setIsBgmMuted(newMuted);
+    setBgmMuted(newMuted);
+
+    // Mute/unmute all audio
+    if (mainBgmRef.current) {
+      mainBgmRef.current.muted = newMuted;
+      if (newMuted) {
+        mainBgmRef.current.pause();
+      } else if (!isGachaOpen && !isMultiGachaOpen) {
+        mainBgmRef.current.play().catch(console.log);
+      }
+    }
+    if (pickBgmRef.current) {
+      pickBgmRef.current.muted = newMuted;
+    }
+    if (cardBgmRef.current) {
+      cardBgmRef.current.muted = newMuted;
+    }
+  };
 
   // Initialize background music
   useEffect(() => {
@@ -85,6 +115,7 @@ export default function Home() {
     mainAudio.preload = "metadata"; // Only preload metadata, not full file
     mainAudio.loop = true;
     mainAudio.volume = 0.3;
+    mainAudio.muted = isBgmMuted;
     mainBgmRef.current = mainAudio;
 
     // Pick BGM - preload auto for immediate playback when needed
@@ -93,6 +124,7 @@ export default function Home() {
     pickAudio.preload = "auto"; // Preload fully for instant playback
     pickAudio.loop = false;
     pickAudio.volume = 0.3;
+    pickAudio.muted = isBgmMuted;
     pickBgmRef.current = pickAudio;
 
     // Card BGM - preload auto for seamless transition
@@ -101,13 +133,14 @@ export default function Home() {
     cardAudio.preload = "auto"; // Preload fully for instant playback
     cardAudio.loop = false;
     cardAudio.volume = 0.3;
+    cardAudio.muted = isBgmMuted;
     cardBgmRef.current = cardAudio;
 
     let audioInitialized = false;
 
-    // Play main BGM on first user interaction (only if not already playing)
+    // Play main BGM on first user interaction (only if not muted)
     const handleInteraction = () => {
-      if (!audioInitialized && mainBgmRef.current) {
+      if (!audioInitialized && mainBgmRef.current && !isBgmMuted) {
         mainBgmRef.current.play().catch((error) => {
           console.log("Audio autoplay prevented:", error);
         });
@@ -118,18 +151,20 @@ export default function Home() {
     };
 
     // Try to play immediately (may be blocked by browser)
-    mainBgmRef.current.play()
-      .then(() => {
-        audioInitialized = true;
-        document.removeEventListener("click", handleInteraction);
-        document.removeEventListener("keydown", handleInteraction);
-      })
-      .catch(() => {
-        // If autoplay is blocked, wait for user interaction
-        console.log("Autoplay blocked, waiting for user interaction");
-        document.addEventListener("click", handleInteraction);
-        document.addEventListener("keydown", handleInteraction);
-      });
+    if (!isBgmMuted) {
+      mainBgmRef.current.play()
+        .then(() => {
+          audioInitialized = true;
+          document.removeEventListener("click", handleInteraction);
+          document.removeEventListener("keydown", handleInteraction);
+        })
+        .catch(() => {
+          // If autoplay is blocked, wait for user interaction
+          console.log("Autoplay blocked, waiting for user interaction");
+          document.addEventListener("click", handleInteraction);
+          document.addEventListener("keydown", handleInteraction);
+        });
+    }
 
     return () => {
       if (mainBgmRef.current) {
@@ -456,6 +491,55 @@ export default function Home() {
   return (
     <LazyMotion features={domAnimation} strict>
       <div className="h-auto hextech-bg hexagon-pattern mb-20 md:mb-0">
+        {/* BGM Toggle Button - Fixed position */}
+        <motion.button
+          onClick={toggleBgmMute}
+          className="fixed top-4 right-4 z-50 p-3 rounded-full bg-lol-dark-lighter/80 border-2 border-lol-gold/50 hover:border-lol-gold hover:bg-lol-dark-lighter transition-all backdrop-blur-sm"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          title={isBgmMuted ? "Unmute BGM" : "Mute BGM"}
+        >
+          {isBgmMuted ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-lol-gold"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-lol-gold"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              />
+            </svg>
+          )}
+        </motion.button>
+
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 py-12">
           {/* Title Section */}

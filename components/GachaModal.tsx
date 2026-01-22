@@ -47,27 +47,23 @@ export default function GachaModal({
         prevPlayerIdRef.current = player.id;
       }
 
-      // Set up pick BGM ended listener to seamlessly transition to card BGM
-      const handlePickBgmEnded = () => {
-        console.log("Pick BGM ended, starting card BGM immediately");
-        if (cardBgmRef.current && prevPlayerIdRef.current === player.id) {
-          cardBgmRef.current.currentTime = 0;
-          cardBgmRef.current.play().catch((error) => {
-            console.log("Card BGM auto-play failed:", error);
-          });
-        }
-      };
-
-      if (pickBgmRef.current) {
-        console.log("Pick BGM duration:", pickBgmRef.current.duration, "seconds");
-        pickBgmRef.current.addEventListener('ended', handlePickBgmEnded, { once: true });
-      }
-
       // Special FIFA-style reveal sequence for Worlds winners (1.6x slower for better viewing)
       if (useFifaAnimation) {
         const timer1 = setTimeout(() => {
           if (prevPlayerIdRef.current === player.id) {
             setStage("nationality");
+
+            // Stop pick BGM and start card BGM when loading ends (no gap)
+            if (pickBgmRef.current && !pickBgmRef.current.paused) {
+              pickBgmRef.current.pause();
+              pickBgmRef.current.currentTime = 0;
+            }
+            if (cardBgmRef.current) {
+              cardBgmRef.current.currentTime = 0;
+              cardBgmRef.current.play().catch((error) => {
+                console.log("Card BGM play failed:", error);
+              });
+            }
           }
         }, 2560);
         const timer2 = setTimeout(() => {
@@ -104,15 +100,24 @@ export default function GachaModal({
           clearTimeout(timer2);
           clearTimeout(timer3);
           clearTimeout(timer4);
-          if (pickBgmRef.current) {
-            pickBgmRef.current.removeEventListener('ended', handlePickBgmEnded);
-          }
         };
       } else {
         // Normal reveal sequence
         const timer1 = setTimeout(() => {
           if (prevPlayerIdRef.current === player.id) {
             setStage("reveal");
+
+            // Stop pick BGM and start card BGM when reveal animation starts
+            if (pickBgmRef.current && !pickBgmRef.current.paused) {
+              pickBgmRef.current.pause();
+              pickBgmRef.current.currentTime = 0;
+            }
+            if (cardBgmRef.current) {
+              cardBgmRef.current.currentTime = 0;
+              cardBgmRef.current.play().catch((error) => {
+                console.log("Card BGM play failed:", error);
+              });
+            }
           }
         }, 1600);
         const timer2 = setTimeout(() => {
@@ -137,9 +142,6 @@ export default function GachaModal({
         return () => {
           clearTimeout(timer1);
           clearTimeout(timer2);
-          if (pickBgmRef.current) {
-            pickBgmRef.current.removeEventListener('ended', handlePickBgmEnded);
-          }
         };
       }
     }

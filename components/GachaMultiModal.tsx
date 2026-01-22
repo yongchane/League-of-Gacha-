@@ -46,33 +46,27 @@ export default function GachaMultiModal({
         prevPlayersKeyRef.current = currentKey;
       }
 
-      // Set up pick BGM ended listener to seamlessly transition to card BGM
-      const handlePickBgmEnded = () => {
-        console.log("Pick BGM ended (multi), starting card BGM immediately");
-        if (cardBgmRef.current && prevPlayersKeyRef.current === currentKey) {
-          cardBgmRef.current.currentTime = 0;
-          cardBgmRef.current.play().catch((error) => {
-            console.log("Card BGM auto-play failed:", error);
-          });
-        }
-      };
-
-      if (pickBgmRef.current) {
-        pickBgmRef.current.addEventListener('ended', handlePickBgmEnded, { once: true });
-      }
-
       const timer = setTimeout(() => {
         if (prevPlayersKeyRef.current === currentKey) {
           setStage("reveal");
           setDisplayPlayers(new Map(players));
+
+          // Stop pick BGM and start card BGM when reveal animation starts
+          if (pickBgmRef.current && !pickBgmRef.current.paused) {
+            pickBgmRef.current.pause();
+            pickBgmRef.current.currentTime = 0;
+          }
+          if (cardBgmRef.current) {
+            cardBgmRef.current.currentTime = 0;
+            cardBgmRef.current.play().catch((error) => {
+              console.log("Card BGM play failed:", error);
+            });
+          }
         }
       }, 1600);
 
       return () => {
         clearTimeout(timer);
-        if (pickBgmRef.current) {
-          pickBgmRef.current.removeEventListener('ended', handlePickBgmEnded);
-        }
       };
     }
   }, [isOpen, players, pickBgmRef, cardBgmRef]);

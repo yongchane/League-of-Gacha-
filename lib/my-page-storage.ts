@@ -41,6 +41,7 @@ export interface MyPageStats {
 // 로컬 스토리지 키
 const STATS_KEY = "lol-roster-my-page-stats";
 const USER_ID_KEY = "lol-roster-userid";
+const BGM_MUTED_KEY = "lol-roster-bgm-muted";
 
 // 사용자 ID 가져오기 (없으면 생성)
 function getUserId(): string {
@@ -224,4 +225,21 @@ export function resetStats(): void {
 export function getRecentGames(limit: number = 10): GameRecord[] {
   const stats = getMyPageStats();
   return stats.gameHistory.slice(0, limit);
+}
+
+// BGM 음소거 설정 관리
+export function getBgmMuted(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const muted = localStorage.getItem(BGM_MUTED_KEY);
+    return muted === "true";
+  } catch (error) {
+    console.error("Failed to load BGM muted setting:", error);
+    return false;
+  }
+}
+
+export function setBgmMuted(muted: boolean): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(BGM_MUTED_KEY, muted.toString());
 }
