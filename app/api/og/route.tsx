@@ -88,7 +88,7 @@ export async function GET(request: Request) {
             backgroundColor: "white", // Safety Root
           }}
         >
-          {/* WRAPPER: Dark Blue Background rgb(9, 20, 40) */}
+          {/* WRAPPER: Back to Safe Named Colors */}
           <div
             style={{
               display: "flex",
@@ -97,7 +97,7 @@ export async function GET(request: Request) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "rgb(9, 20, 40)", 
+              backgroundColor: "black", // Safe & Brand-aligned (Void)
               color: "white",
             }}
           >
@@ -108,7 +108,7 @@ export async function GET(request: Request) {
                 marginBottom: 40,
                 fontSize: 32,
                 fontWeight: "bold",
-                color: "rgb(200, 170, 110)", // Hextech Gold
+                color: "goldenrod", // Better than 'gold'
               }}
             >
               LEAGUE OF GACHA
@@ -136,16 +136,16 @@ export async function GET(request: Request) {
                       flexDirection: "column",
                       width: 200,
                       height: 300,
-                      backgroundColor: "rgb(30, 35, 40)", // Dark Grey Card BG
-                      border: "2px solid rgb(200, 170, 110)", // Gold Border
+                      backgroundColor: "midnightblue", // Deep Blue, standard name
+                      border: "3px solid goldenrod", // Matches title
                       borderRadius: 15,
                       marginRight: marginRight,
                       alignItems: "center",
-                      justifyContent: "center",
+                      justifyContent: "center", // Center content vertically
                       padding: 10,
                     }}
                   >
-                    <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "rgb(200, 170, 110)" }}>
+                    <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "goldenrod" }}>
                       {pos}
                     </div>
                     
@@ -154,22 +154,22 @@ export async function GET(request: Request) {
                         <div style={{ fontSize: 24, fontWeight: '900', textAlign: 'center', color: "white" }}>
                           {player.name}
                         </div>
-                        <div style={{ fontSize: 14, color: "rgb(240, 230, 210)", marginTop: 5 }}>
+                        <div style={{ fontSize: 14, color: "gainsboro", marginTop: 5 }}>
                           {player.nationality}
                         </div>
-                        <div style={{ fontSize: 14, color: "rgb(200, 170, 110)", marginTop: 10, fontWeight: "bold" }}>
+                        <div style={{ fontSize: 14, color: "goldenrod", marginTop: 10, fontWeight: "bold" }}>
                           {player.teamShort} • {player.year}
                         </div>
                       </div>
                     ) : (
-                      <div style={{ fontSize: 20, color: "rgb(72, 83, 99)" }}>?</div>
+                      <div style={{ fontSize: 20, color: "slategray" }}>?</div>
                     )}
                   </div>
                 );
               })}
             </div>
             
-            <div style={{ marginTop: 20, fontSize: 16, display: 'flex', color: "rgb(107, 114, 128)" }}>
+            <div style={{ marginTop: 20, fontSize: 16, display: 'flex', color: "gray" }}>
               leagueofgacha.com
             </div>
           </div>
