@@ -310,3 +310,4 @@ export async function GET(request: Request) {
         height: 630,
       }
     );
+}
