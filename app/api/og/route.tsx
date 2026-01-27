@@ -9,12 +9,10 @@ const POSITIONS: Position[] = ["TOP", "JUNGLE", "MID", "ADC", "SUPPORT"];
 export const runtime = "edge";
 
 export async function GET(request: Request) {
-  console.log("Generating OG Image...");
+  console.log("Generating OG Image Debug Mode...");
   try {
-    // Font loading for Cloudflare Edge (using reliable raw URL)
-    const fontData = await fetch(
-      new URL("https://github.com/google/fonts/raw/main/ofl/inter/Inter-Bold.ttf", import.meta.url)
-    ).then((res) => res.arrayBuffer());
+    // DEBUG: Temporarily removed font loading to isolate the issue.
+    // const fontData = await fetch(...)
 
     const { searchParams } = new URL(request.url);
     const rosterParam = searchParams.get("roster");
@@ -34,7 +32,6 @@ export async function GET(request: Request) {
               backgroundImage:
                 "linear-gradient(to bottom right, #091428, #0a0a0c)",
               color: "#C8AA6E",
-              fontFamily: '"Inter"',
             }}
           >
             <div style={{ fontSize: 60, fontWeight: 700, marginBottom: 20 }}>
@@ -356,14 +353,14 @@ export async function GET(request: Request) {
       {
         width: 1200,
         height: 630,
-        fonts: [
-          {
-            name: "Inter",
-            data: fontData,
-            style: "normal",
-            weight: 700,
-          },
-        ],
+        // fonts: [
+        //   {
+        //     name: "Inter",
+        //     data: fontData,
+        //     style: "normal",
+        //     weight: 700,
+        //   },
+        // ],
       }
     );
   } catch (e: any) {
