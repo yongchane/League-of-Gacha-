@@ -170,7 +170,7 @@ export async function GET(request: Request) {
             </div>
             
             <div style={{ marginTop: 20, fontSize: 16, display: 'flex', color: "gray" }}>
-              leagueofgacha.com
+              leagueofgacha.com - v5.0 SAFE MODE
             </div>
           </div>
         </div>
