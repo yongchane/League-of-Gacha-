@@ -89,29 +89,12 @@ export async function GET(request: Request) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#091428",
-            backgroundImage:
-              "radial-gradient(circle at center, #1a2c4e 0%, #091428 100%)",
             color: "white",
             padding: "40px",
             fontFamily: "sans-serif",
             position: "relative",
           }}
         >
-          {/* Background Pattern */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              opacity: 0.1,
-              backgroundImage:
-                "linear-gradient(#C8AA6E 1px, transparent 1px), linear-gradient(90deg, #C8AA6E 1px, transparent 1px)",
-              backgroundSize: "40px 40px",
-            }}
-          />
-
           {/* Title */}
           <div
             style={{
@@ -133,7 +116,7 @@ export async function GET(request: Request) {
             </div>
           </div>
 
-          {/* Championship Badge */}
+          {/* Championship Badge (No Emojis) */}
           {championship && (
             <div
               style={{
@@ -142,19 +125,16 @@ export async function GET(request: Request) {
                 right: "40px",
                 display: "flex",
                 alignItems: "center",
-                background: "linear-gradient(to right, #7a5c29, #C8AA6E)",
+                backgroundColor: "#C8AA6E",
                 padding: "10px 20px",
                 borderRadius: "30px",
                 border: "2px solid #F0E6D2",
-                boxShadow: "0 4px 20px rgba(200, 170, 110, 0.4)",
               }}
             >
-              <div style={{ fontSize: 24, marginRight: "10px" }}>
-                {championship.type === "winner" ? "🏆" : "🥈"}
-              </div>
               <div
                 style={{ fontSize: 20, fontWeight: "bold", color: "#091428" }}
               >
+                {championship.type === "winner" ? "WINNER" : "RUNNER-UP"} -{" "}
                 {championship.year} {championship.team}
               </div>
             </div>
@@ -182,7 +162,7 @@ export async function GET(request: Request) {
                       flexDirection: "column",
                       width: "200px",
                       height: "300px",
-                      backgroundColor: "rgba(10, 20, 40, 0.6)",
+                      backgroundColor: "#1e2328",
                       border: "2px dashed #485363",
                       borderRadius: "15px",
                       alignItems: "center",
@@ -223,23 +203,8 @@ export async function GET(request: Request) {
                     overflow: "hidden",
                     border: `3px solid ${borderColor}`,
                     position: "relative",
-                    boxShadow: isWinner
-                      ? "0 0 30px rgba(255, 215, 0, 0.3)"
-                      : "0 4px 10px rgba(0,0,0,0.5)",
                   }}
                 >
-                  {/* Card Background Gradient */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: `linear-gradient(to bottom, transparent 40%, ${
-                        player.teamColor || "#091428"
-                      } 120%)`,
-                      opacity: 0.8,
-                    }}
-                  />
-
                   {/* Position Top Left */}
                   <div
                     style={{
@@ -272,12 +237,11 @@ export async function GET(request: Request) {
                         fontWeight: "900",
                         color: "white",
                         textAlign: "center",
-                        textShadow: "0 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       {player.name}
                     </div>
-                    {/* Nationality Flag Emoji (Simulated) */}
+                    {/* Nationality (No Emoji) */}
                     <div
                       style={{
                         fontSize: "14px",
@@ -286,7 +250,7 @@ export async function GET(request: Request) {
                         color: "#F0E6D2",
                       }}
                     >
-                      {getFlagEmoji(player.iso)} {player.nationality}
+                      {player.nationality}
                     </div>
                   </div>
 
@@ -297,7 +261,7 @@ export async function GET(request: Request) {
                       justifyContent: "space-between",
                       alignItems: "center",
                       padding: "15px",
-                      background: "rgba(0,0,0,0.4)",
+                      backgroundColor: "#1e2328",
                       zIndex: 2,
                     }}
                   >
@@ -346,28 +310,3 @@ export async function GET(request: Request) {
         height: 630,
       }
     );
-  } catch (e: any) {
-    console.error("OG Image Error:", e);
-    return new Response(
-      JSON.stringify({
-        error: "Failed to generate image",
-        details: e.message,
-        stack: e.stack,
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store",
-        },
-      }
-    );
-  }
-}
-
-function getFlagEmoji(isoCode: string): string {
-  if (!isoCode) return "";
-  return isoCode
-    .toUpperCase()
-    .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
-}
