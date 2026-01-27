@@ -6,6 +6,8 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+export const runtime = "edge";
+
 export async function generateMetadata(
   props: Props
 ): Promise<Metadata> {
