@@ -178,6 +178,11 @@ export async function GET(request: Request) {
       {
         width: 1200,
         height: 630,
+        headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        }
       }
     );
   } catch (e) {
