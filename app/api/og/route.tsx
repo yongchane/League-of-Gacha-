@@ -78,17 +78,20 @@ export async function GET(request: Request) {
       }
     }
 
+    const date = new Date();
+    const timeString = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
     return new ImageResponse(
       (
         <div
           style={{
             height: "100%",
             width: "100%",
-            display: "flex", // Keep root flex
-            backgroundColor: "white", // SAFETY: Root is white
+            display: "flex",
+            backgroundColor: "white", // Safety Root
           }}
         >
-          {/* WRAPPER DIV: Forces Dark Background */}
+          {/* WRAPPER: using standard 'black' instead of hex */}
           <div
             style={{
               display: "flex",
@@ -97,7 +100,7 @@ export async function GET(request: Request) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "#1e2328", // Try slightly lighter dark first
+              backgroundColor: "black", 
               color: "white",
             }}
           >
@@ -108,13 +111,13 @@ export async function GET(request: Request) {
                 marginBottom: 40,
                 fontSize: 32,
                 fontWeight: "bold",
-                color: "#C8AA6E",
+                color: "gold", // Standard name
               }}
             >
               LEAGUE OF GACHA
             </div>
 
-            {/* Cards Container - Flex Row */}
+            {/* Cards Container */}
             <div
               style={{
                 display: "flex",
@@ -136,8 +139,8 @@ export async function GET(request: Request) {
                       flexDirection: "column",
                       width: 200,
                       height: 300,
-                      backgroundColor: "black", // Deep dark card
-                      border: "3px solid #C8AA6E",
+                      backgroundColor: "navy", // Standard name
+                      border: "3px solid gold", // Standard name
                       borderRadius: 15,
                       marginRight: marginRight,
                       alignItems: "center",
@@ -145,7 +148,7 @@ export async function GET(request: Request) {
                       padding: 10,
                     }}
                   >
-                    <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "#C8AA6E" }}>
+                    <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "gold" }}>
                       {pos}
                     </div>
                     
@@ -154,23 +157,23 @@ export async function GET(request: Request) {
                         <div style={{ fontSize: 24, fontWeight: '900', textAlign: 'center', color: "white" }}>
                           {player.name}
                         </div>
-                        <div style={{ fontSize: 14, color: "#F0E6D2", marginTop: 5 }}>
+                        <div style={{ fontSize: 14, color: "silver", marginTop: 5 }}>
                           {player.nationality}
                         </div>
-                        <div style={{ fontSize: 14, color: "#C8AA6E", marginTop: 10, fontWeight: "bold" }}>
-                          {player.teamShort} • {player.year}
+                        <div style={{ fontSize: 14, color: "gold", marginTop: 10, fontWeight: "bold" }}>
+                          {player.teamShort}
                         </div>
                       </div>
                     ) : (
-                      <div style={{ fontSize: 20, color: "#485363" }}>?</div>
+                      <div style={{ fontSize: 20, color: "gray" }}>?</div>
                     )}
                   </div>
                 );
               })}
             </div>
             
-            <div style={{ marginTop: 20, fontSize: 16, display: 'flex', color: "#6b7280" }}>
-              leagueofgacha.com
+            <div style={{ marginTop: 20, fontSize: 16, display: 'flex', color: "gray" }}>
+              leagueofgacha.com - Build: {timeString}
             </div>
           </div>
         </div>
