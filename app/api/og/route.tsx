@@ -88,8 +88,8 @@ export async function GET(request: Request) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "white", // High contrast safety
-            color: "black",
+            backgroundColor: "#091428", // Restore Dark BG
+            color: "white", // Restore White Text
           }}
         >
           {/* Title */}
@@ -99,10 +99,10 @@ export async function GET(request: Request) {
               marginBottom: 40,
               fontSize: 32,
               fontWeight: "bold",
-              color: "black",
+              color: "#C8AA6E", // Restore Gold Title
             }}
           >
-            ROSTER CHECK - HORIZONTAL
+            LEAGUE OF GACHA
           </div>
 
           {/* Cards Container - Flex Row */}
@@ -127,8 +127,8 @@ export async function GET(request: Request) {
                     flexDirection: "column",
                     width: 200,
                     height: 300,
-                    backgroundColor: "#f0f0f0", // Light gray card
-                    border: "2px solid black",
+                    backgroundColor: "#1e2328", // Dark Card BG
+                    border: "3px solid #C8AA6E", // Gold Border
                     borderRadius: 15,
                     marginRight: marginRight,
                     alignItems: "center",
@@ -136,29 +136,32 @@ export async function GET(request: Request) {
                     padding: 10,
                   }}
                 >
-                  <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10 }}>
+                  <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "#C8AA6E" }}>
                     {pos}
                   </div>
                   
                   {player ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div style={{ fontSize: 24, fontWeight: '900', textAlign: 'center' }}>
+                      <div style={{ fontSize: 24, fontWeight: '900', textAlign: 'center', color: "white" }}>
                         {player.name}
                       </div>
-                      <div style={{ fontSize: 14 }}>
-                        {player.teamShort}
+                      <div style={{ fontSize: 14, color: "#F0E6D2", marginTop: 5 }}>
+                        {player.nationality}
+                      </div>
+                      <div style={{ fontSize: 14, color: "#C8AA6E", marginTop: 10, fontWeight: "bold" }}>
+                        {player.teamShort} • {player.year}
                       </div>
                     </div>
                   ) : (
-                    <div style={{ fontSize: 20, color: "#888" }}>?</div>
+                    <div style={{ fontSize: 20, color: "#485363" }}>?</div>
                   )}
                 </div>
               );
             })}
           </div>
           
-          <div style={{ marginTop: 20, fontSize: 16, display: 'flex' }}>
-            DEBUG MODE: Horizontal + Borders
+          <div style={{ marginTop: 20, fontSize: 16, display: 'flex', color: "#6b7280" }}>
+            leagueofgacha.com
           </div>
         </div>
       ),
