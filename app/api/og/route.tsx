@@ -88,7 +88,7 @@ export async function GET(request: Request) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            background: "linear-gradient(135deg, #010a13 0%, #0a1428 50%, #010a13 100%)",
+            backgroundColor: "#010a13",
             padding: "50px",
           }}
         >
@@ -105,7 +105,6 @@ export async function GET(request: Request) {
                 padding: "12px 30px",
                 border: "4px solid #ffd700",
                 borderRadius: 12,
-                boxShadow: "0 0 30px rgba(200, 155, 60, 0.6)",
               }}
             >
               🏆 {String(championship)} CHAMPION
@@ -118,13 +117,10 @@ export async function GET(request: Request) {
               display: "flex",
               fontSize: 56,
               fontWeight: "bold",
-              background: "linear-gradient(135deg, #c89b3c 0%, #ffd700 50%, #c89b3c 100%)",
-              backgroundClip: "text",
-              color: "transparent",
+              color: "#c89b3c",
               marginBottom: 45,
               textTransform: "uppercase",
-              letterSpacing: "2px",
-              textShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+              letterSpacing: "3px",
             }}
           >
             MY LEGENDARY ROSTER
@@ -149,15 +145,10 @@ export async function GET(request: Request) {
                     flexDirection: "column",
                     width: 190,
                     height: 300,
-                    background: player
-                      ? "linear-gradient(180deg, #1e2328 0%, #0a1428 100%)"
-                      : "linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)",
+                    backgroundColor: player ? "#1e2328" : "#2a2a2a",
                     border: player ? "5px solid #c89b3c" : "5px solid #5b5a56",
                     borderRadius: 16,
                     padding: 18,
-                    boxShadow: player
-                      ? "0 8px 24px rgba(200, 155, 60, 0.4), inset 0 1px 0 rgba(200, 155, 60, 0.2)"
-                      : "0 8px 16px rgba(0, 0, 0, 0.3)",
                   }}
                 >
                   {/* Position Badge */}
@@ -167,18 +158,13 @@ export async function GET(request: Request) {
                       fontSize: 18,
                       fontWeight: "bold",
                       color: player ? "#0a1428" : "#f0e6d2",
-                      background: player
-                        ? "linear-gradient(135deg, #c89b3c 0%, #ffd700 100%)"
-                        : "#5b5a56",
+                      backgroundColor: player ? "#c89b3c" : "#5b5a56",
                       padding: "8px 14px",
                       borderRadius: 8,
                       marginBottom: 20,
                       justifyContent: "center",
                       textTransform: "uppercase",
                       letterSpacing: "1px",
-                      boxShadow: player
-                        ? "0 4px 12px rgba(200, 155, 60, 0.4)"
-                        : "0 2px 8px rgba(0, 0, 0, 0.3)",
                     }}
                   >
                     {pos}
@@ -202,7 +188,6 @@ export async function GET(request: Request) {
                           color: "#f0e6d2",
                           marginBottom: 14,
                           textAlign: "center",
-                          textShadow: "0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(200, 155, 60, 0.3)",
                           letterSpacing: "0.5px",
                         }}
                       >
@@ -215,7 +200,6 @@ export async function GET(request: Request) {
                           fontSize: 20,
                           color: "#a09b8c",
                           marginBottom: 18,
-                          textShadow: "0 2px 4px rgba(0, 0, 0, 0.6)",
                         }}
                       >
                         {player.nationality}
@@ -228,7 +212,6 @@ export async function GET(request: Request) {
                           fontSize: 18,
                           color: "#c89b3c",
                           fontWeight: "bold",
-                          textShadow: "0 2px 6px rgba(0, 0, 0, 0.7)",
                           letterSpacing: "0.5px",
                         }}
                       >
@@ -264,7 +247,6 @@ export async function GET(request: Request) {
               marginTop: 45,
               fontWeight: "600",
               letterSpacing: "1px",
-              textShadow: "0 2px 8px rgba(0, 0, 0, 0.8)",
             }}
           >
             leagueofgacha.com
