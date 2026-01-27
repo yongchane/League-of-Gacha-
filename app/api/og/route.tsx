@@ -97,7 +97,7 @@ export async function GET(request: Request) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "black", // Safe & Brand-aligned (Void)
+              backgroundColor: "black", // User confirmed this works
               color: "white",
             }}
           >
@@ -108,7 +108,7 @@ export async function GET(request: Request) {
                 marginBottom: 40,
                 fontSize: 32,
                 fontWeight: "bold",
-                color: "goldenrod", // Better than 'gold'
+                color: "gold", // User confirmed this works
               }}
             >
               LEAGUE OF GACHA
@@ -136,16 +136,16 @@ export async function GET(request: Request) {
                       flexDirection: "column",
                       width: 200,
                       height: 300,
-                      backgroundColor: "midnightblue", // Deep Blue, standard name
-                      border: "3px solid goldenrod", // Matches title
+                      backgroundColor: "navy", // User confirmed this works
+                      border: "3px solid gold", // User confirmed this works
                       borderRadius: 15,
                       marginRight: marginRight,
                       alignItems: "center",
-                      justifyContent: "center", // Center content vertically
+                      justifyContent: "center",
                       padding: 10,
                     }}
                   >
-                    <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "goldenrod" }}>
+                    <div style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: "gold" }}>
                       {pos}
                     </div>
                     
@@ -154,15 +154,15 @@ export async function GET(request: Request) {
                         <div style={{ fontSize: 24, fontWeight: '900', textAlign: 'center', color: "white" }}>
                           {player.name}
                         </div>
-                        <div style={{ fontSize: 14, color: "gainsboro", marginTop: 5 }}>
+                        <div style={{ fontSize: 14, color: "silver", marginTop: 5 }}>
                           {player.nationality}
                         </div>
-                        <div style={{ fontSize: 14, color: "goldenrod", marginTop: 10, fontWeight: "bold" }}>
+                        <div style={{ fontSize: 14, color: "gold", marginTop: 10, fontWeight: "bold" }}>
                           {player.teamShort} • {player.year}
                         </div>
                       </div>
                     ) : (
-                      <div style={{ fontSize: 20, color: "slategray" }}>?</div>
+                      <div style={{ fontSize: 20, color: "gray" }}>?</div>
                     )}
                   </div>
                 );
