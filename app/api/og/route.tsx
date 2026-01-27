@@ -45,14 +45,14 @@ export async function GET(request: Request) {
         {
           width: 1200,
           height: 630,
-          fonts: [
-            {
-              name: "Inter",
-              data: fontData,
-              style: "normal",
-              weight: 700,
-            },
-          ],
+          // fonts: [
+          //   {
+          //     name: "Inter",
+          //     data: fontData,
+          //     style: "normal",
+          //     weight: 700,
+          //   },
+          // ],
         }
       );
     }
