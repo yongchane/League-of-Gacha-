@@ -88,11 +88,9 @@ export async function GET(request: Request) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#091428",
-            backgroundImage:
-              "radial-gradient(circle at center, #1a2c4e 0%, #091428 100%)",
+            backgroundColor: "#091428", // Solid color only
             color: "white",
-            fontFamily: "sans-serif",
+            // fontFamily removed - letting system default handle it
           }}
         >
           {/* Title */}
@@ -108,7 +106,7 @@ export async function GET(request: Request) {
             LEAGUE OF GACHA
           </div>
 
-          {/* Cards Container - Using margin instead of gap for safety */}
+          {/* Cards Container */}
           <div
             style={{
               display: "flex",
@@ -119,7 +117,6 @@ export async function GET(request: Request) {
           >
             {POSITIONS.map((pos, index) => {
               const player = rosterPlayers[pos];
-              // Add margin to all except the last item
               const marginRight = index < POSITIONS.length - 1 ? 20 : 0;
 
               if (!player) {
@@ -141,13 +138,7 @@ export async function GET(request: Request) {
                     }}
                   >
                     <div style={{ color: "#485363", fontSize: 20 }}>?</div>
-                    <div
-                      style={{
-                        color: "#485363",
-                        fontSize: 14,
-                        marginTop: 5,
-                      }}
-                    >
+                    <div style={{ color: "#485363", fontSize: 14, marginTop: 5 }}>
                       {pos}
                     </div>
                   </div>
@@ -158,7 +149,7 @@ export async function GET(request: Request) {
               const isWinner =
                 player.isWinner && player.championshipLeague === "WORLDS";
               const borderColor = isWinner
-                ? "#FFD700"
+                ? "#FFD700" // Gold
                 : player.teamColor || "#C8AA6E";
 
               return (
@@ -173,15 +164,17 @@ export async function GET(request: Request) {
                     borderRadius: 15,
                     border: `4px solid ${borderColor}`,
                     marginRight: marginRight,
+                    // valid simple relative positioning
                     position: "relative",
                   }}
                 >
-                  {/* Position Label */}
+                  {/* Position Label (Flow instead of Absolute if possible, but Absolute is nicer) */}
+                  {/* Trying simple flow layout for max safety this time */}
                   <div
                     style={{
-                      position: "absolute",
-                      top: 15,
-                      left: 15,
+                      display: "flex",
+                      paddingTop: 10,
+                      paddingLeft: 15,
                       fontSize: 12,
                       fontWeight: "bold",
                       color: isWinner ? "#FFD700" : "#C8AA6E",
@@ -198,7 +191,6 @@ export async function GET(request: Request) {
                       flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
-                      marginTop: 20,
                     }}
                   >
                     <div
